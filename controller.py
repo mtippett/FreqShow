@@ -40,6 +40,7 @@ class FreqShowController(object):
 		self.waterfall = WaterfallSpectrogram(model, self)
 		# Start with instantaneous spectrogram.
 		self._current_view = None
+#		self.change_to_waterfall()
 		self.change_to_instant()
 
 	def change_view(self, view):

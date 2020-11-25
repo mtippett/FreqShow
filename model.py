@@ -43,8 +43,8 @@ class FreqShowModel(object):
 		self.set_max_intensity('AUTO')
 		# Initialize RTL-SDR library.
 		self.sdr = RtlSdr()
-		self.set_center_freq(90.3)
-		self.set_sample_rate(2.4)
+		self.set_center_freq(915)
+		self.set_sample_rate(3.2)
 		self.set_gain('AUTO')
 
 	def _clear_intensity(self):
@@ -64,6 +64,7 @@ class FreqShowModel(object):
 			self.sdr.set_center_freq(freq_mhz*1000000.0)
 			self._clear_intensity()
 		except IOError:
+                        print("Hit freq error");
 			# Error setting value, ignore it for now but in the future consider
 			# adding an error message dialog.
 			pass
@@ -77,6 +78,7 @@ class FreqShowModel(object):
 		try:
 			self.sdr.set_sample_rate(sample_rate_mhz*1000000.0)
 		except IOError:
+                        print("Hit Sample Error");
 			# Error setting value, ignore it for now but in the future consider
 			# adding an error message dialog.
 			pass

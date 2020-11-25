@@ -333,11 +333,11 @@ class SpectrogramBase(ViewBase):
 	def __init__(self, model, controller):
 		self.model      = model
 		self.controller = controller
-		self.buttons = ui.ButtonGrid(model.width, model.height, 4, 5)
-		self.buttons.add(0, 0, 'CONFIG', click=self.controller.change_to_settings)
-		self.buttons.add(1, 0, 'SWITCH MODE', click=self.controller.toggle_main, colspan=2)
-		self.buttons.add(3, 0, 'QUIT', click=self.quit_click,
-			bg_color=freqshow.CANCEL_BG)
+		#self.buttons = ui.ButtonGrid(model.width, model.height, 4, 5)
+		#self.buttons.add(0, 0, 'CONFIG', click=self.controller.change_to_settings)
+		#self.buttons.add(1, 0, 'SWITCH MODE', click=self.controller.toggle_main, colspan=2)
+		#self.buttons.add(3, 0, 'QUIT', click=self.quit_click,
+		#	bg_color=freqshow.CANCEL_BG)
 		self.overlay_enabled = True
 
 	def render_spectrogram(self, screen):
@@ -350,7 +350,8 @@ class SpectrogramBase(ViewBase):
 		"""Draw a hash mark (triangle) on the bottom row at the specified x
 		position.
 		"""
-		y = self.model.height - self.buttons.row_size + padding
+#		y = self.model.height - self.buttons.row_size + padding
+		y = self.model.height - 2*freqshow.NUM_FONT + padding
 		pygame.draw.lines(screen, freqshow.BUTTON_FG, False, 
 			[(x, y), (x-size, y+size), (x+size, y+size), (x, y), (x, y+2*size)])
 
@@ -359,16 +360,19 @@ class SpectrogramBase(ViewBase):
 		screen.fill(freqshow.MAIN_BG)
 		if self.overlay_enabled:
 			# Draw shrunken spectrogram with overlaid buttons and axes values.
-			spect_rect = (0, self.buttons.row_size, self.model.width,
-				self.model.height-2*self.buttons.row_size)
+			spect_rect = (0, 0, self.model.width,
+#				self.model.height)
+				self.model.height-freqshow.NUM_FONT*2)
 			self.render_spectrogram(screen.subsurface(spect_rect))
 			# Draw hash marks.
 			self.render_hash(screen, 0)
 			self.render_hash(screen, self.model.width/2)
 			self.render_hash(screen, self.model.width-1)
 			# Draw frequencies in bottom row.
-			bottom_row  = (0, self.model.height-self.buttons.row_size,
-				self.model.width, self.buttons.row_size)
+			bottom_row  = (0, self.model.height-2*freqshow.NUM_FONT,
+				self.model.width, 2*freqshow.NUM_FONT)
+#			bottom_row  = (0, self.model.height,
+#				self.model.width, 10)
 			freq        = self.model.get_center_freq()
 			bandwidth   = self.model.get_sample_rate()
 			# Render minimum frequency on left.
@@ -397,20 +401,20 @@ class SpectrogramBase(ViewBase):
 			screen.blit(label, ui.align(label.get_rect(), spect_rect,
 				horizontal=ui.ALIGN_LEFT, vertical=ui.ALIGN_TOP))
 			# Draw the buttons.
-			self.buttons.render(screen)
+			#self.buttons.render(screen)
 		else:
 			# Draw fullscreen spectrogram.
 			self.render_spectrogram(screen)
 
-	def click(self, location):
-		mx, my = location
-		if my > self.buttons.row_size and my < 4*self.buttons.row_size:
-			# Handle click on spectrogram.
-			self.overlay_enabled = not self.overlay_enabled
-		else:
-			# Handle click on buttons.
-			self.buttons.click(location)
-
+#	def click(self, location):
+#		mx, my = location
+#		if my > self.buttons.row_size and my < 4*self.buttons.row_size:
+#			# Handle click on spectrogram.
+#			self.overlay_enabled = not self.overlay_enabled
+#		else:
+#			# Handle click on buttons.
+#			self.buttons.click(location)
+#
 	def quit_click(self, button):
 		self.controller.message_dialog('QUIT: Are you sure?',
 			accept=self.quit_accept)

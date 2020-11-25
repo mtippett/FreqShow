@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # FreqShow main application and configuration.
 # Author: Tony DiCola (tony@tonydicola.com)
 #
@@ -41,8 +42,8 @@ CLICK_DEBOUNCE  = 0.4	# Number of seconds to wait between clicks events. Set
 						# double clicks from hard screen presses.
 
 # Font size configuration.
-MAIN_FONT = 33
-NUM_FONT  = 50
+MAIN_FONT = 15 
+NUM_FONT  = 20
 
 # Color configuration (RGB tuples, 0 to 255).
 MAIN_BG        = (  0,   0,   0) # Black
@@ -72,8 +73,8 @@ if __name__ == '__main__':
 	# Initialize pygame and SDL to use the PiTFT display and touchscreen.
 	os.putenv('SDL_VIDEODRIVER', 'fbcon')
 	os.putenv('SDL_FBDEV'      , '/dev/fb1')
-	os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
-	os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
+#/	os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
+#	os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
 	pygame.display.init()
 	pygame.font.init()
 	pygame.mouse.set_visible(False)
@@ -95,10 +96,22 @@ if __name__ == '__main__':
 	while True:
 		# Process any events (only mouse events for now).
 		for event in pygame.event.get():
-			if event.type is pygame.MOUSEBUTTONDOWN \
-				and (time.time() - lastclick) >= CLICK_DEBOUNCE:
-				lastclick = time.time()
-				fscontroller.current().click(pygame.mouse.get_pos())
+                        if event.type is pygame.KEYDOWN:
+                            #print("key pressed ",event.key)
+                            # print("keeys looking for are", pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT)
+                            if event.key == pygame.K_LEFT:
+                                print("lower")
+                                fsmodel.set_center_freq(fsmodel.get_center_freq() - fsmodel.get_sample_rate()/2)
+                            if event.key == pygame.K_RIGHT:
+                                print("increase")
+                                fsmodel.set_center_freq(fsmodel.get_center_freq() + fsmodel.get_sample_rate()/2)
+                            if event.key == pygame.K_UP:
+                                print("zoom out")
+                                fsmodel.set_sample_rate(fsmodel.get_sample_rate()*1.1)
+                            if event.key == pygame.K_DOWN:
+                                print("switching mode")
+                                fscontroller.toggle_main()
+                        
 		# Update and render the current view.
 		fscontroller.current().render(screen)
 		pygame.display.update()
